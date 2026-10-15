@@ -1,0 +1,391 @@
+{
+  "users": {
+    "yasin": {
+      "money": 240,
+      "avatar": {
+        "hat": "cowboy",
+        "face": "beard",
+        "skinColor": "#ffd1a4",
+        "shirtColor": "#3b82f6",
+        "heldItem": "tespih",
+        "shoes": "sneakers"
+      },
+      "inventory": [
+        "hat_bere",
+        "skin_#facc15",
+        "shirt_#3b82f6",
+        "face_none",
+        "hats_kasket",
+        "faces_beard",
+        "props_none",
+        "props_gazoz",
+        "props_asagold",
+        "skins_#ffd1a4",
+        "hats_cowboy",
+        "props_baglama",
+        "props_nargile",
+        "props_cay",
+        "props_tespih"
+      ],
+      "friends": [
+        "rümeysa"
+      ],
+      "houses": {
+        "garden": {
+          "type": "garden",
+          "furniture": [
+            {
+              "id": "somine",
+              "x": 203,
+              "y": 160
+            },
+            {
+              "id": "sedir",
+              "x": 546,
+              "y": 277
+            },
+            {
+              "id": "berjer",
+              "x": 589,
+              "y": 375
+            },
+            {
+              "id": "tv",
+              "x": 510,
+              "y": 164
+            },
+            {
+              "id": "sedir",
+              "x": 394,
+              "y": 245
+            },
+            {
+              "id": "somine",
+              "x": 649,
+              "y": 162
+            },
+            {
+              "id": "akvaryum",
+              "x": 700,
+              "y": 460
+            },
+            {
+              "id": "gramofon",
+              "x": 685,
+              "y": 328
+            },
+            {
+              "id": "tv",
+              "x": 79,
+              "y": 160
+            },
+            {
+              "id": "berjer",
+              "x": 88,
+              "y": 319
+            },
+            {
+              "id": "arcade",
+              "x": 352,
+              "y": 160
+            },
+            {
+              "id": "bitki",
+              "x": 739,
+              "y": 221
+            }
+          ]
+        },
+        "pool": {
+          "type": "pool",
+          "furniture": [
+            {
+              "id": "gramofon",
+              "x": 571,
+              "y": 236
+            },
+            {
+              "id": "sedir",
+              "x": 562,
+              "y": 411
+            },
+            {
+              "id": "bitki",
+              "x": 711,
+              "y": 339
+            },
+            {
+              "id": "sedir",
+              "x": 701,
+              "y": 178
+            },
+            {
+              "id": "yemek_masasi",
+              "x": 85,
+              "y": 283
+            },
+            {
+              "id": "berjer",
+              "x": 505,
+              "y": 332
+            },
+            {
+              "id": "piyano",
+              "x": 135,
+              "y": 178
+            },
+            {
+              "id": "arcade",
+              "x": 269,
+              "y": 173
+            }
+          ]
+        },
+        "standart": {
+          "type": "standart",
+          "furniture": [
+            {
+              "id": "akvaryum",
+              "x": 224,
+              "y": 254
+            },
+            {
+              "id": "arcade",
+              "x": 251,
+              "y": 368
+            },
+            {
+              "id": "arcade",
+              "x": 669,
+              "y": 360
+            },
+            {
+              "id": "arcade",
+              "x": 155,
+              "y": 189
+            },
+            {
+              "id": "arcade",
+              "x": 750,
+              "y": 283
+            },
+            {
+              "id": "arcade",
+              "x": 90,
+              "y": 255
+            },
+            {
+              "id": "bilgisayar",
+              "x": 519,
+              "y": 228
+            },
+            {
+              "id": "bilgisayar",
+              "x": 645,
+              "y": 236
+            }
+          ]
+        }
+      },
+      "house": {
+        "type": "garden",
+        "furniture": [
+          {
+            "id": "somine",
+            "x": 203,
+            "y": 160
+          },
+          {
+            "id": "sedir",
+            "x": 546,
+            "y": 277
+          },
+          {
+            "id": "berjer",
+            "x": 589,
+            "y": 375
+          },
+          {
+            "id": "tv",
+            "x": 510,
+            "y": 164
+          },
+          {
+            "id": "sedir",
+            "x": 394,
+            "y": 245
+          },
+          {
+            "id": "somine",
+            "x": 649,
+            "y": 162
+          },
+          {
+            "id": "akvaryum",
+            "x": 700,
+            "y": 460
+          },
+          {
+            "id": "gramofon",
+            "x": 685,
+            "y": 328
+          },
+          {
+            "id": "tv",
+            "x": 79,
+            "y": 160
+          },
+          {
+            "id": "berjer",
+            "x": 88,
+            "y": 319
+          },
+          {
+            "id": "arcade",
+            "x": 352,
+            "y": 160
+          },
+          {
+            "id": "bitki",
+            "x": 739,
+            "y": 221
+          }
+        ]
+      },
+      "furnitureInventory": [
+        "sedir"
+      ],
+      "friendRequests": [],
+      "propInventory": {
+        "props_gazoz": 1,
+        "props_asagold": 1,
+        "props_baglama": 1,
+        "props_nargile": 1,
+        "props_tespih": 1
+      },
+      "teaExpiresAt": null,
+      "gender": "male"
+    },
+    "babake": {
+      "money": 200,
+      "avatar": {
+        "hat": "bere",
+        "face": "none",
+        "skinColor": "#facc15",
+        "shirtColor": "#3b82f6",
+        "heldItem": "none"
+      },
+      "inventory": [
+        "hat_bere",
+        "skin_#facc15",
+        "shirt_#3b82f6",
+        "face_none",
+        "props_none",
+        "props_nargile"
+      ],
+      "friends": [],
+      "friendRequests": [],
+      "house": null,
+      "houses": {},
+      "furnitureInventory": [],
+      "propInventory": {
+        "props_nargile": 1
+      }
+    },
+    "rümeysa": {
+      "money": 631,
+      "avatar": {
+        "hat": "bere",
+        "face": "none",
+        "skinColor": "#facc15",
+        "shirtColor": "#3b82f6",
+        "heldItem": "none"
+      },
+      "inventory": [
+        "hat_bere",
+        "skin_#facc15",
+        "shirt_#3b82f6",
+        "face_none",
+        "props_none",
+        "props_nargile"
+      ],
+      "friends": [
+        "yasin"
+      ],
+      "friendRequests": [],
+      "house": null,
+      "houses": {},
+      "furnitureInventory": [],
+      "propInventory": {
+        "props_nargile": 2
+      },
+      "teaExpiresAt": null
+    },
+    "ahmet": {
+      "money": 100,
+      "avatar": {
+        "hat": "bere",
+        "face": "none",
+        "skinColor": "#facc15",
+        "shirtColor": "#3b82f6",
+        "heldItem": "none"
+      },
+      "inventory": [
+        "hat_bere",
+        "skin_#facc15",
+        "shirt_#3b82f6",
+        "face_none",
+        "props_none"
+      ],
+      "friends": [],
+      "friendRequests": [],
+      "house": null,
+      "houses": {},
+      "furnitureInventory": [],
+      "propInventory": {}
+    },
+    "maltoroz": {
+      "money": 100259,
+      "gender": "male",
+      "avatar": {
+        "hat": "cowboy",
+        "face": "none",
+        "skinColor": "#ffd1a4",
+        "shirtColor": "hoodie",
+        "color": "hoodie",
+        "heldItem": "none",
+        "shoes": "classic"
+      },
+      "inventory": [
+        "hats_bere",
+        "skins_#facc15",
+        "shirts_#3b82f6",
+        "shoes_sneakers",
+        "face_none",
+        "props_none",
+        "shoes_classic",
+        "shirts_hoodie",
+        "hats_cowboy"
+      ],
+      "friends": [],
+      "friendRequests": [],
+      "house": null,
+      "furnitureInventory": [],
+      "propInventory": {}
+    }
+  },
+  "leaderboard": {
+    "billiard": {},
+    "batak": {
+      "🤖 Çaycı İsmail": 1186,
+      "🤖 Mahmut Emmi": 1047,
+      "🤖 Dayı Recep": 128,
+      "🤖 Hasan Dayı": 254,
+      "yasin": 40
+    },
+    "tavla": {
+      "yasin": 1
+    },
+    "okey101": {}
+  }
+}

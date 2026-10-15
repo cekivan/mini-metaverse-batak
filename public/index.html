@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Mini Metaverse</title>
+    <!-- CSS dosyamızı bağlıyoruz -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 1. ÜST MENÜ (Mekan Değiştirme, Gece/Gündüz, Liderlik, Gardırop, Bakiye ve Chat Kontrolleri) -->
+    <div class="top-nav">
+        <div class="money-badge" id="moneyBadgeContainer">💰 <span id="userMoneyDisplay">100</span> TL</div>
+        <button class="nav-btn btn-street" onclick="changeRoom('sokak')">🌳 Sokak</button>
+        <button class="nav-btn btn-cafe" onclick="changeRoom('kafe')">☕ Kafe</button>
+        <button class="nav-btn" style="background: linear-gradient(135deg, #a855f7, #7e22ce);" onclick="changeRoom('nargile_cafe')">💨 Nargile Cafe</button>
+        <button class="nav-btn btn-beach" onclick="changeRoom('sahil')">🏖️ Sahil</button>
+        <button class="nav-btn" style="background: linear-gradient(135deg, #06b6d4, #0891b2);" onclick="changeRoom('market')">🛒 Mobilya Marketi</button>
+        <button class="nav-btn" style="background: linear-gradient(135deg, #f97316, #c2410c);" onclick="openHousingPortalModal()">🏢 Konutlar & Evler</button>
+        <button id="friendsNavBtn" class="nav-btn" style="position: relative; background: linear-gradient(135deg, #10b981, #047857);" onclick="openFriendsListModal()">
+            👥 Arkadaşlarım (<span id="friendsCountBadge">0</span>)
+            <span id="friendRequestsBadge" style="display: none; position: absolute; top: -6px; right: -6px; background: #ef4444; color: white; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 12px; border: 2px solid #0f172a; box-shadow: 0 0 10px #ef4444;">0</span>
+        </button>
+        <button class="nav-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706);" onclick="openItemInventoryModal()">🎒 Eşyalarım (<span id="myPropsCountBadge">0</span>)</button>
+        <button class="nav-btn" style="background: linear-gradient(135deg, #ec4899, #be185d);" onclick="openWardrobe()">👔 Gardırop</button>
+        <button class="nav-btn" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);" onclick="toggleNightMode()">🌓 Gece/Gündüz</button>
+        <button class="nav-btn" style="background: linear-gradient(135deg, #f59e0b, #b45309);" onclick="openLeaderboard()">🏆 Sıralama</button>
+        <button class="nav-btn" style="background: linear-gradient(135deg, #0284c7, #0369a1);" onclick="toggleMobileDpad()">📱 Kumanda</button>
+        <button id="adminPanelNavBtn" class="nav-btn" style="display: none; background: linear-gradient(135deg, #ef4444, #991b1b); box-shadow: 0 4px 12px rgba(239,68,68,0.4);" onclick="openAdminPanel()">👑 Admin Paneli</button>
+        <button id="chatToggleBtn" class="nav-btn btn-chat" onclick="toggleChatPanel()">💬 Chat Kapat</button>
+    </div>
+
+    <!-- 2. LOGIN (GİRİŞ) EKRANI -->
+    <div id="loginScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%); z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white;">
+        <div style="background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 35px 30px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); backdrop-filter: blur(16px);">
+            <div style="font-size: 40px; margin-bottom: 5px;">🎮</div>
+            <h1 style="color: #facc15; margin: 0 0 8px 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px;">Mini Metaverse</h1>
+            <p style="color: #94a3b8; font-size: 14px; margin-bottom: 24px;">Adınızı ve oyun şifresini yazıp dünyaya katılın</p>
+            
+            <input type="text" id="usernameInput" placeholder="Kullanıcı Adı (İsminiz)" style="width: 100%; padding: 12px 16px; font-size: 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 12px; text-align: center; outline: none; font-weight: 600;">
+            <input type="password" id="passwordInput" placeholder="Şifre" style="width: 100%; padding: 12px 16px; font-size: 15px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.15); background: rgba(15, 23, 42, 0.8); color: white; margin-bottom: 14px; text-align: center; outline: none;">
+            
+            <!-- Cinsiyet Seçimi -->
+            <div style="margin-bottom: 18px; text-align: left;">
+                <label style="font-size: 12px; font-weight: 700; color: #cbd5e1; margin-bottom: 6px; display: block; text-align: center;">Karakter Cinsiyeti:</label>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" id="genderBtnMale" onclick="selectLoginGender('male')" style="flex: 1; padding: 10px; border-radius: 10px; border: 2px solid #38bdf8; background: rgba(56, 189, 248, 0.25); color: white; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                        <span>👦</span> Erkek
+                    </button>
+                    <button type="button" id="genderBtnFemale" onclick="selectLoginGender('female')" style="flex: 1; padding: 10px; border-radius: 10px; border: 2px solid rgba(255,255,255,0.15); background: rgba(15, 23, 42, 0.6); color: #94a3b8; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;">
+                        <span>👧</span> Kadın
+                    </button>
+                </div>
+            </div>
+            
+            <button onclick="attemptLogin()" style="width: 100%; padding: 13px; font-size: 15px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 800; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); transition: transform 0.1s;">Giriş Yap</button>
+            <p id="loginError" style="color: #f87171; font-weight: 700; display: none; margin-top: 15px; font-size: 13px;">❌ Yanlış şifre!</p>
+        </div>
+    </div>
+
+    <!-- 3. SABİT VE SÜRÜKLENEBİLİR YAN CHAT PANELİ -->
+    <div id="sideChatContainer" style="position: fixed; top: 60px; right: 20px; width: 280px; height: 320px; background: rgba(44, 62, 80, 0.95); border: 2px solid #34495e; border-radius: 10px; z-index: 9999; display: flex; flex-direction: column; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+        <div id="chatHeader" style="cursor: move; background: #1abc9c; color: white; padding: 5px; border-radius: 5px; text-align: center; font-weight: bold; margin-bottom: 5px; font-size: 12px;">Sohbet Geçmişi (Tut Sürükle)</div>
+        <div id="chatHistory" style="flex: 1; background: rgba(0, 0, 0, 0.3); border-radius: 6px; padding: 8px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; color: white; font-size: 13px;"></div>
+        <div style="display: flex; gap: 5px;">
+            <input type="text" id="sideChatInput" placeholder="Mesaj yaz..." autocomplete="off" style="flex: 1; padding: 8px; border-radius: 5px; border: none; outline: none; font-size: 13px;">
+            <button onclick="sendSideChat()" style="padding: 8px 12px; background: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px;">Gönder</button>
+        </div>
+    </div>
+
+    <!-- RECONNECT MODALI -->
+    <div id="reconnectModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 20000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #34495e; padding: 25px; border-radius: 12px; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.6); border: 2px solid #1abc9c;">
+            <h2 style="color: #f1c40f; margin-top: 0;">🎮 Devam Eden Oyun Bulundu!</h2>
+            <p style="font-size: 15px; margin: 15px 0;"><b><span id="reconnectTableName">Masa</span></b> üzerinde devam eden bir oyunun var. Ne yapmak istersin?</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button onclick="handleAcceptReconnect()" style="flex: 1; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">▶️ Kaldığın Yerden Devam Et</button>
+                <button onclick="handleDeclineReconnect()" style="flex: 1; padding: 12px; background: #e74c3c; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px;">🆕 Yeni Oyuna Başla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GARDIROR (AÇILABİLİR AVATAR & KIYAFET DEĞİŞTİRME EKRANI) MODALI -->
+    <div id="wardrobeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 22000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #1e293b; padding: 24px; border-radius: 18px; width: 94%; max-width: 780px; max-height: 88vh; overflow-y: auto; text-align: center; box-shadow: 0 15px 45px rgba(0,0,0,0.85); border: 2px solid #ec4899;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:16px;">
+                <h2 style="color: #f472b6; margin: 0; display:flex; align-items:center; gap:8px; font-size:22px;">👔 Avatarım & Gardırop</h2>
+                <div style="background: rgba(0,0,0,0.4); padding: 6px 14px; border-radius: 20px; font-weight:800; color:#34d399; font-size:14px; border:1px solid rgba(52,211,153,0.3);">
+                    Bakiye: <span id="wardrobeMoneyDisplay">100</span> TL
+                </div>
+            </div>
+
+            <!-- 2 KOLONLU DÜZEN: SOL CANLI AVATAR SAHNESİ, SAĞ EŞYA SEÇİMİ -->
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; text-align: left;">
+                
+                <!-- SOL KOLON: CANLI AVATAR ÖNİZLEME SAHNESİ -->
+                <div style="flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 10px;">
+                    <div class="avatar-stage-box">
+                        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #38bdf8; font-weight: 800; margin-bottom: 6px;">Canlı Karakter Önizleme</div>
+                        <canvas id="avatarPreviewCanvas" width="160" height="190" style="background: transparent;"></canvas>
+                        <div id="previewPlayerName" style="font-weight: 800; font-size: 15px; color: #facc15; margin-top: 4px;">Kivre</div>
+                    </div>
+
+                    <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; font-size: 12px; border: 1px solid rgba(255,255,255,0.08); display:flex; flex-direction:column; gap:6px;">
+                        <div style="font-weight:bold; color:#cbd5e1; margin-bottom:2px;">✨ Üzerindekiler:</div>
+                        <div style="display:flex; justify-content:space-between;"><span>🧢 Şapka / Saç:</span> <b id="currentHatBadge" style="color:#38bdf8;">-</b></div>
+                        <div style="display:flex; justify-content:space-between;"><span>🥸 Yüz / Sakal:</span> <b id="currentFaceBadge" style="color:#facc15;">-</b></div>
+                        <div style="display:flex; justify-content:space-between;"><span>🎨 Ten Rengi:</span> <b id="currentSkinBadge" style="color:#fb923c;">-</b></div>
+                        <div style="display:flex; justify-content:space-between;"><span>👗 Kıyafet / Elbise:</span> <b id="currentShirtBadge" style="color:#a78bfa;">-</b></div>
+                        <div style="display:flex; justify-content:space-between;"><span>👟 Ayakkabı:</span> <b id="currentShoeBadge" style="color:#34d399;">-</b></div>
+                        <div style="display:flex; justify-content:space-between;"><span>🖐️ El Eşyası:</span> <b id="currentPropBadge" style="color:#f43f5e;">-</b></div>
+                    </div>
+                </div>
+
+                <!-- SAĞ KOLON: KATEGORİ SEKMELERİ VE EŞYA LİSTESİ -->
+                <div style="flex: 2; min-width: 290px; display:flex; flex-direction:column;">
+                    <div class="wardrobe-tabs">
+                        <button class="wardrobe-tab-btn active" id="tabHats" onclick="switchWardrobeTab('hats')">🧢 Şapka / Saç</button>
+                        <button class="wardrobe-tab-btn" id="tabFaces" onclick="switchWardrobeTab('faces')">🥸 Yüz / Sakal</button>
+                        <button class="wardrobe-tab-btn" id="tabSkins" onclick="switchWardrobeTab('skins')">🎨 Ten Rengi</button>
+                        <button class="wardrobe-tab-btn" id="tabShirts" onclick="switchWardrobeTab('shirts')">👗 Kıyafet / Elbise</button>
+                        <button class="wardrobe-tab-btn" id="tabShoes" onclick="switchWardrobeTab('shoes')">👟 Ayakkabılar</button>
+                        <button class="wardrobe-tab-btn" id="tabProps" onclick="switchWardrobeTab('props')">🖐️ El Eşyaları</button>
+                    </div>
+
+                    <div style="font-size:12px; color:#94a3b8; margin-bottom:8px;">
+                        💡 <i>Her kategoriden aynı anda sadece 1 eşya giyebilirsiniz. Birini seçtiğinizde diğeri otomatik çıkarılır.</i>
+                    </div>
+
+                    <div class="wardrobe-grid" id="wardrobeActiveGrid"></div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px; display:flex; justify-content:flex-end; gap:10px;">
+                <button onclick="closeWardrobe()" style="padding: 10px 28px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size:14px; box-shadow: 0 4px 12px rgba(59,130,246,0.4);">Kaydet & Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3.1 ADMİN KONTROL PANELİ (SADECE YASİN KULLANICISI İÇİN) -->
+    <div id="adminPanelModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 25000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #0f172a; padding: 24px; border-radius: 18px; width: 94%; max-width: 680px; max-height: 88vh; overflow-y: auto; text-align: left; box-shadow: 0 15px 45px rgba(0,0,0,0.9); border: 2px solid #ef4444;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:16px;">
+                <div>
+                    <h2 style="color: #ef4444; margin: 0; display:flex; align-items:center; gap:8px; font-size:22px;">👑 Admin Kontrol Paneli</h2>
+                    <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Şu an oyunda olan çevrimiçi oyuncuların bakiyesini yönetebilirsin.</div>
+                </div>
+                <button onclick="closeAdminPanel()" style="background: rgba(255,255,255,0.1); border:none; color:white; font-size:18px; padding:6px 12px; border-radius:8px; cursor:pointer;">✕</button>
+            </div>
+
+            <!-- Kullanıcı Arama Çubuğu -->
+            <div style="margin-bottom: 14px;">
+                <input type="text" id="adminUserSearchInput" placeholder="🔍 Oyuncu ara..." oninput="filterAdminUsers()" style="width: 100%; padding: 10px 14px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: white; outline: none; font-size: 14px;">
+            </div>
+
+            <!-- Kullanıcı Listesi -->
+            <div id="adminUserListContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 52vh; overflow-y: auto; padding-right: 4px;">
+                <div style="text-align:center; color:#94a3b8; padding:20px;">Yükleniyor...</div>
+            </div>
+
+            <div style="margin-top: 18px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="font-size: 12px; color: #64748b;">Değişiklikler anında kullanıcının hesabına yansır ve kalıcı olarak kaydedilir.</div>
+                <button onclick="closeAdminPanel()" style="padding: 9px 22px; background: #334155; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MASA SEÇENEKLERİ / YANCI / YENİ MASA MODALI -->
+    <div id="tableSelectModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 15000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #2c3e50; padding: 20px; border-radius: 12px; width: 90%; max-width: 520px; max-height: 85vh; overflow-y: auto; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.7); border: 2px solid #3498db;">
+            <h2 id="tableSelectTitle" style="color: #3498db; margin-top: 0;">Masa Seçimi</h2>
+            <p style="font-size: 14px; color: #bdc3c7;">İster oynanan oyunu izle (yancı ol), ister açık masaya katıl, bot ekle ya da yeni masa aç!</p>
+            
+            <div id="tableOptionsList" style="display: flex; flex-direction: column; gap: 10px; margin: 15px 0; text-align: left;"></div>
+            
+            <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(250, 204, 21, 0.3); border-radius: 8px; padding: 10px 14px; margin: 10px 0; display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap;">
+                <label style="font-size:13px; font-weight:bold; color:#facc15;">💰 Yeni Masa Bahsi:</label>
+                <select id="newTableBetSelect" style="padding:6px 12px; border-radius:6px; background:#0f172a; color:white; border:1px solid #facc15; font-weight:bold; font-size:13px; outline:none; cursor:pointer;">
+                    <option value="0">0 TL (Ücretsiz)</option>
+                    <option value="10">10 TL</option>
+                    <option value="25">25 TL</option>
+                    <option value="50">50 TL</option>
+                    <option value="100">100 TL</option>
+                    <option value="250">250 TL</option>
+                </select>
+            </div>
+            
+            <div id="newTable101ModeContainer" style="display:none; background: rgba(0,0,0,0.25); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 10px 14px; margin: 10px 0; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap;">
+                <label style="font-size:13px; font-weight:bold; color:#38bdf8;">🀄 101 Oyun Türü:</label>
+                <select id="newTable101ModeSelect" style="padding:6px 12px; border-radius:6px; background:#0f172a; color:white; border:1px solid #38bdf8; font-weight:bold; font-size:13px; outline:none; cursor:pointer;">
+                    <option value="esli" selected>👥 Eşli 101 (2v2 Kıraathane & A4 Yazboz)</option>
+                    <option value="tekli">👤 Tekli 101 (Bireysel)</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
+                <button id="btnCreateNewTable" onclick="handleCreateNewTable()" style="padding: 10px 16px; background: #2ecc71; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">➕ Yeni Masa Aç</button>
+                <button id="btnAddBotBtn" onclick="handleAddBotToTable()" style="padding: 10px 16px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">🤖 Masaya Bot Ekle</button>
+                <button onclick="closeTableSelectModal()" style="padding: 10px 16px; background: #7f8c8d; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LİDERLİK TABLOSU MODALI -->
+    <div id="leaderboardModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 25000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #1e293b; padding: 25px; border-radius: 16px; width: 94%; max-width: 820px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.8); border: 2px solid #f59e0b;">
+            <h2 style="color: #facc15; margin-top: 0;">🏆 Kıraathane Liderlik Tablosu</h2>
+            <div style="font-size: 12px; color: #94a3b8; margin-top: -6px; margin-bottom: 14px;">(Sadece gerçek oyuncular listelenir, botlar sıralamaya dahil edilmez)</div>
+            
+            <div style="display: flex; gap: 12px; margin: 15px 0; text-align: left; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 160px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                    <h3 style="color: #38bdf8; margin: 0 0 10px 0; font-size: 15px; text-align: center;">🎱 Bilardo Kralları</h3>
+                    <div id="billiardLeaderList" style="font-size: 13px; display:flex; flex-direction:column; gap:6px;">Yükleniyor...</div>
+                </div>
+                <div style="flex: 1; min-width: 160px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                    <h3 style="color: #34d399; margin: 0 0 10px 0; font-size: 15px; text-align: center;">🃏 Batak Üstatları</h3>
+                    <div id="batakLeaderList" style="font-size: 13px; display:flex; flex-direction:column; gap:6px;">Yükleniyor...</div>
+                </div>
+                <div style="flex: 1; min-width: 160px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                    <h3 style="color: #f59e0b; margin: 0 0 10px 0; font-size: 15px; text-align: center;">🎲 Tavla Ustaları</h3>
+                    <div id="tavlaLeaderList" style="font-size: 13px; display:flex; flex-direction:column; gap:6px;">Yükleniyor...</div>
+                </div>
+                <div style="flex: 1; min-width: 160px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                    <h3 style="color: #ec4899; margin: 0 0 10px 0; font-size: 15px; text-align: center;">🀄 101 Okey Piri</h3>
+                    <div id="okey101LeaderList" style="font-size: 13px; display:flex; flex-direction:column; gap:6px;">Yükleniyor...</div>
+                </div>
+            </div>
+
+            <button onclick="closeLeaderboard()" style="padding: 10px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Kapat</button>
+        </div>
+    </div>
+
+    <!-- SOSYAL BİLDİRİM TOASTLARI KONTEYNERİ -->
+    <div id="socialNotificationToastContainer" style="position: fixed; top: 75px; right: 20px; z-index: 99999; display: flex; flex-direction: column; align-items: flex-end; pointer-events: none;"></div>
+
+    <!-- GELEN ARKADAŞLIK İSTEĞİ POPUP KUTUSU -->
+    <div id="friendRequestToast" style="display: none; position: fixed; bottom: 30px; right: 20px; z-index: 99998; background: #0f172a; border: 2px solid #10b981; border-radius: 14px; padding: 16px 20px; color: white; box-shadow: 0 15px 40px rgba(0,0,0,0.85); flex-direction: column; gap: 10px; max-width: 320px; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 28px;">👥</span>
+            <div>
+                <div style="font-weight: 800; font-size: 14px; color: #10b981;">Yeni Arkadaşlık İsteği!</div>
+                <div style="font-size: 13px; color: #cbd5e1; margin-top: 2px;"><b><span id="friendRequestFromName">Oyuncu</span></b> seninle arkadaş olmak istiyor!</div>
+            </div>
+        </div>
+        <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px;">
+            <button onclick="acceptFriendRequest()" style="padding: 7px 16px; background: #10b981; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px;">✅ Kabul Et</button>
+            <button onclick="declineFriendRequest()" style="padding: 7px 14px; background: #ef4444; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px;">❌ Reddet</button>
+        </div>
+    </div>
+
+    <!-- 1. OYUNCU ETKİLEŞİM MODALI (Karaktere Tıklanınca Açılır) -->
+    <div id="playerInteractionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 24000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #1e293b; padding: 22px; border-radius: 18px; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 15px 45px rgba(0,0,0,0.9); border: 2px solid #38bdf8; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="color: #38bdf8; margin: 0; font-size: 18px;">👤 Oyuncu Profili</h3>
+                <button onclick="closePlayerInteractionModal()" style="background: rgba(255,255,255,0.1); border:none; color:white; font-size:16px; padding:4px 10px; border-radius:6px; cursor:pointer;">✕</button>
+            </div>
+            
+            <div style="background: rgba(15, 23, 42, 0.6); padding: 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 16px;">
+                <canvas id="interactionAvatarCanvas" width="120" height="130" style="display:block; margin: 0 auto 8px auto;"></canvas>
+                <div id="interactionPlayerName" style="font-weight: 800; font-size: 18px; color: #facc15;">Oyuncu</div>
+                <div id="interactionPlayerLocation" style="font-size: 12px; color: #94a3b8; margin-top: 4px;">Konum: -</div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 9px;">
+                <button onclick="sendTeaToInteractingPlayer()" style="padding: 10px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(245,158,11,0.3);">
+                    ☕ Tavşan Kanı Çay Ismarla (10 TL)
+                </button>
+                <button onclick="openSendMoneyModal()" style="padding: 10px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(16,185,129,0.3);">
+                    💸 Para Gönder
+                </button>
+                <button onclick="openGiftItemModal()" style="padding: 10px; background: linear-gradient(135deg, #ec4899, #db2777); color: white; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 12px rgba(236,72,153,0.3);">
+                    🎁 Eşya Hediye Et
+                </button>
+                <button id="interactionFriendBtn" onclick="toggleFriendshipWithInteractingPlayer()" style="padding: 10px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    👥 Arkadaş Ekle
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. PARA GÖNDERME MODALI -->
+    <div id="sendMoneyModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 25000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #1e293b; padding: 24px; border-radius: 16px; width: 90%; max-width: 380px; text-align: center; box-shadow: 0 15px 45px rgba(0,0,0,0.9); border: 2px solid #10b981;">
+            <h3 style="color: #10b981; margin: 0 0 8px 0; font-size: 20px;">💸 Para Gönder</h3>
+            <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 16px;"><b><span id="sendMoneyTargetName">Oyuncu</span></b> kullanıcısının hesabına göndermek istediğiniz tutarı girin:</p>
+            
+            <div style="margin-bottom: 20px;">
+                <input type="number" id="sendMoneyAmountInput" min="1" max="10000" value="10" style="width: 80%; padding: 12px 16px; font-size: 20px; font-weight: 800; text-align: center; border-radius: 10px; border: 2px solid #10b981; background: #0f172a; color: #facc15; outline: none;">
+                <span style="font-weight: 800; font-size: 18px; margin-left: 8px; color: #facc15;">TL</span>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="confirmSendMoney()" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 14px;">Gönder</button>
+                <button onclick="closeSendMoneyModal()" style="flex: 1; padding: 12px; background: #475569; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px;">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. EŞYA HEDİYE ETME MODALI -->
+    <div id="giftItemModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 25000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #1e293b; padding: 24px; border-radius: 16px; width: 92%; max-width: 480px; max-height: 85vh; overflow-y: auto; text-align: left; box-shadow: 0 15px 45px rgba(0,0,0,0.9); border: 2px solid #ec4899;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                <h3 style="color: #f472b6; margin: 0; font-size: 19px;">🎁 Eşya Hediye Et</h3>
+                <button onclick="closeGiftItemModal()" style="background: rgba(255,255,255,0.1); border:none; color:white; font-size:16px; padding:4px 10px; border-radius:6px; cursor:pointer;">✕</button>
+            </div>
+            <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 14px;"><b><span id="giftItemTargetName">Oyuncu</span></b> için el aksesuarlarınız arasından hediye seçebilirsiniz:</p>
+
+            <div id="giftableItemsList" style="max-height: 50vh; overflow-y: auto; margin-bottom: 16px;"></div>
+
+            <div style="text-align: right;">
+                <button onclick="closeGiftItemModal()" style="padding: 9px 20px; background: #475569; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. ARKADAŞLAR VE ARKADAŞLIK İSTEKLERİ LİSTESİ MODALI -->
+    <div id="friendsListModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 23000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #0f172a; padding: 24px; border-radius: 18px; width: 94%; max-width: 600px; max-height: 88vh; overflow-y: auto; text-align: left; box-shadow: 0 15px 45px rgba(0,0,0,0.9); border: 2px solid #10b981;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:14px;">
+                <div>
+                    <h2 style="color: #34d399; margin: 0; font-size: 21px; display:flex; align-items:center; gap:8px;">👥 Sosyal & Arkadaşlar</h2>
+                    <div style="font-size: 12px; color: #94a3b8; margin-top: 3px;">Arkadaşlarınızı ve gelen arkadaşlık isteklerinizi buradan yönetin.</div>
+                </div>
+                <button onclick="closeFriendsListModal()" style="background: rgba(255,255,255,0.1); border:none; color:white; font-size:18px; padding:6px 12px; border-radius:8px; cursor:pointer;">✕</button>
+            </div>
+
+            <!-- ÜST 2 SEKME BUTONU: ARKADAŞLARIM & GELEN İSTEKLER -->
+            <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                <button id="tabBtnFriends" onclick="switchFriendsTab('friends')" style="flex:1; padding: 10px; background: #10b981; color: white; border: none; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                    👥 Arkadaşlarım (<span id="friendsCountTabBadge">0</span>)
+                </button>
+                <button id="tabBtnRequests" onclick="switchFriendsTab('requests')" style="flex:1; padding: 10px; background: rgba(30,41,59,0.8); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; position:relative;">
+                    📩 Arkadaşlık İstekleri (<span id="requestsCountTabBadge">0</span>)
+                </button>
+            </div>
+
+            <!-- 1. SEKME: ARKADAŞLARIM İÇERİĞİ -->
+            <div id="friendsTabContent">
+                <!-- Kullanıcı Adıyla Arkadaş Ekleme Kutusu -->
+                <div style="display: flex; gap: 8px; margin-bottom: 14px; background: rgba(30,41,59,0.7); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);">
+                    <input type="text" id="addFriendUsernameInput" placeholder="Kullanıcı adı yazarak istek gönder..." style="flex:1; background:transparent; border:none; color:white; font-size:13px; outline:none;">
+                    <button onclick="sendFriendRequestByInput()" style="padding: 7px 14px; background: #10b981; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">➕ İstek Gönder</button>
+                </div>
+
+                <!-- Arkadaş Kartları Listesi -->
+                <div id="friendsListContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 48vh; overflow-y: auto;"></div>
+            </div>
+
+            <!-- 2. SEKME: GELEN ARKADAŞLIK İSTEKLERİ İÇERİĞİ -->
+            <div id="friendRequestsTabContent" style="display: none;">
+                <div id="friendRequestsListContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 48vh; overflow-y: auto;"></div>
+            </div>
+
+            <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; display:flex; justify-content:flex-end;">
+                <button onclick="closeFriendsListModal()" style="padding: 9px 22px; background: #334155; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4.1 EŞYA & AKSESUAR ÇANTASI (ENVANTER PAKETİ) MODALI -->
+    <div id="itemInventoryModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 23000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #0f172a; padding: 24px; border-radius: 18px; width: 94%; max-width: 720px; max-height: 88vh; overflow-y: auto; text-align: left; box-shadow: 0 15px 45px rgba(0,0,0,0.9); border: 2px solid #f59e0b;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:14px;">
+                <div>
+                    <h2 style="color: #fbbf24; margin: 0; font-size: 21px; display:flex; align-items:center; gap:8px;">🎒 Eşya & Aksesuar Çantam</h2>
+                    <div style="font-size: 12px; color: #94a3b8; margin-top: 3px;">Sahip olduğun el eşyaları, adetleri ve durumları. Elinize alabilir veya arkadaşlarınıza hediye edebilirsiniz.</div>
+                </div>
+                <button onclick="closeItemInventoryModal()" style="background: rgba(255,255,255,0.1); border:none; color:white; font-size:18px; padding:6px 12px; border-radius:8px; cursor:pointer;">✕</button>
+            </div>
+
+            <!-- Eşyalar Listesi Grid -->
+            <div id="itemInventoryList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; max-height: 54vh; overflow-y: auto; padding: 4px;"></div>
+
+            <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div style="font-size:12px; color:#cbd5e1;">💡 <i>Yeni el eşyaları <b>Gardırop</b> menüsünden satın alınır. Buradan sahip olduğunuz eşyaları elinize alabilir veya arkadaşlarınıza hediye edebilirsiniz.</i></div>
+                <button onclick="closeItemInventoryModal()" style="padding: 9px 24px; background: #334155; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. EMLAKÇI MODALI (Ali Bey Emlak) -->
+    <div id="realEstateModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 24000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #0f172a; padding: 24px; border-radius: 18px; width: 94%; max-width: 820px; max-height: 88vh; overflow-y: auto; text-align: center; box-shadow: 0 15px 45px rgba(0,0,0,0.9); border: 2px solid #f59e0b;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:16px;">
+                <div>
+                    <h2 style="color: #facc15; margin: 0; font-size: 22px; display:flex; align-items:center; gap:8px;">🏠 Emlakçı Ali Bey</h2>
+                    <div style="font-size: 13px; color: #94a3b8; margin-top: 4px; text-align:left;">Hayalindeki evi satın al! Evine mobilyalar yerleştirebilir, arkadaşlarını davet edebilirsin.</div>
+                </div>
+                <button onclick="closeRealEstateModal()" style="background: rgba(255,255,255,0.1); border:none; color:white; font-size:18px; padding:6px 12px; border-radius:8px; cursor:pointer;">✕</button>
+            </div>
+
+            <div id="realEstateCardsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin-bottom: 20px;"></div>
+
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px; display:flex; justify-content:flex-end;">
+                <button onclick="closeRealEstateModal()" style="padding: 10px 24px; background: #334155; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. MOBİLYA VE EV MARKETİ MODALI -->
+    <div id="furnitureMarketModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 24000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #0f172a; padding: 24px; border-radius: 18px; width: 94%; max-width: 820px; max-height: 88vh; overflow-y: auto; text-align: left; box-shadow: 0 15px 45px rgba(0,0,0,0.9); border: 2px solid #06b6d4;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:16px;">
+                <div>
+                    <h2 style="color: #22d3ee; margin: 0; font-size: 22px; display:flex; align-items:center; gap:8px;">🛒 Mobilya Marketi (Kasiyer Hasan)</h2>
+                    <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Evin için otantik şark sedirleri, televizyon, şömine ve dekoratif mobilyalar satın al!</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; border-radius: 8px; padding: 6px 14px; font-weight: bold; color: #34d399; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                        <span>💰 Bakiye:</span> <span id="marketMoneyDisplay" style="font-size: 16px; font-weight: 900;">0</span> <span>TL</span>
+                    </div>
+                    <button onclick="closeFurnitureMarketModal()" style="background: rgba(255,255,255,0.1); border:none; color:white; font-size:18px; padding:6px 12px; border-radius:8px; cursor:pointer;">✕</button>
+                </div>
+            </div>
+
+            <div id="furnitureCatalogGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 20px;"></div>
+
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px; display:flex; justify-content:flex-end;">
+                <button onclick="closeFurnitureMarketModal()" style="padding: 10px 24px; background: #334155; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. KONUTLAR & EV ZİYARETİ MODALI (SADECE KENDİ EVİN VE ARKADAŞLARININ EVLERİ) -->
+    <div id="housingPortalModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 23500; justify-content: center; align-items: center; color: white;">
+        <div style="background: #0f172a; padding: 24px; border-radius: 18px; width: 94%; max-width: 620px; max-height: 88vh; overflow-y: auto; text-align: left; box-shadow: 0 15px 45px rgba(0,0,0,0.9); border: 2px solid #f97316;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:14px;">
+                <div>
+                    <h2 style="color: #fb923c; margin: 0; font-size: 22px; display:flex; align-items:center; gap:8px;">🏢 Konutlar & Ev Ziyareti</h2>
+                    <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Burada yalnızca <b>kendi eviniz</b> ve <b>arkadaşlarınızın evleri</b> listelenir.</div>
+                </div>
+                <button onclick="closeHousingPortalModal()" style="background: rgba(255,255,255,0.1); border:none; color:white; font-size:18px; padding:6px 12px; border-radius:8px; cursor:pointer;">✕</button>
+            </div>
+
+            <div id="availableHousesList" style="display: flex; flex-direction: column; gap: 10px; max-height: 55vh; overflow-y: auto; margin-bottom: 16px;"></div>
+
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px; display:flex; justify-content:space-between; align-items:center;">
+                <button onclick="closeHousingPortalModal(); openRealEstateModal();" style="padding: 9px 18px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px;">🏠 Emlakçıya Git</button>
+                <button onclick="closeHousingPortalModal()" style="padding: 9px 22px; background: #334155; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. EV İÇİ MOBİLYA DÜZENLEME MODALI (SADECE EV SAHİBİ İÇİN) -->
+    <div id="furniturePlacementModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 25000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #1e293b; padding: 24px; border-radius: 18px; width: 94%; max-width: 680px; max-height: 88vh; overflow-y: auto; text-align: left; box-shadow: 0 15px 45px rgba(0,0,0,0.9); border: 2px solid #8b5cf6;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; margin-bottom:16px;">
+                <div>
+                    <h2 style="color: #a78bfa; margin: 0; font-size: 21px; display:flex; align-items:center; gap:8px;">🛋️ Mobilyaları Düzenle</h2>
+                    <div style="font-size: 13px; color: #94a3b8; margin-top: 4px;">Karakterinizin durduğu yere mobilya koyabilir veya yerleştirilen mobilyaları deponuza geri alabilirsiniz.</div>
+                </div>
+                <button onclick="closeFurniturePlacementModal()" style="background: rgba(255,255,255,0.1); border:none; color:white; font-size:18px; padding:6px 12px; border-radius:8px; cursor:pointer;">✕</button>
+            </div>
+
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <!-- Sol Kolon: Depodaki Mobilyalar -->
+                <div style="flex: 1; min-width: 250px; background: rgba(15,23,42,0.6); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
+                    <h3 style="color: #38bdf8; margin: 0 0 10px 0; font-size: 15px;">📦 Depodaki Mobilyaların</h3>
+                    <div id="myInventoryFurnitureList" style="max-height: 45vh; overflow-y: auto;"></div>
+                </div>
+
+                <!-- Sağ Kolon: Odadaki Mobilyalar -->
+                <div style="flex: 1; min-width: 250px; background: rgba(15,23,42,0.6); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);">
+                    <h3 style="color: #34d399; margin: 0 0 10px 0; font-size: 15px;">🏠 Odaya Yerleştirilmiş Mobilyalar</h3>
+                    <div id="myPlacedFurnitureList" style="max-height: 45vh; overflow-y: auto;"></div>
+                </div>
+            </div>
+
+            <div style="margin-top: 18px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px; display:flex; justify-content:flex-end;">
+                <button onclick="closeFurniturePlacementModal()" style="padding: 9px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">Tamam</button>
+            </div>
+        </div>
+    </div>
+
+ <!-- 4. OYUN / LOBİ MODAL EKRANI -->
+    <div id="gameModal" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e293b; padding: 20px; border-radius: 16px; z-index: 2000; color: white; width: 85vw; max-width: 900px; max-height: 90vh; overflow-y: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 2px solid #38bdf8;">
+        
+        <!-- SÜRÜKLENEBİLİR BAŞLIK -->
+        <div id="modalHeader" style="cursor: move; background: #1abc9c; color: white; padding: 10px; border-radius: 5px; text-align: center; font-weight: bold; margin-top: -10px; margin-left: -10px; margin-right: -10px; margin-bottom: 15px;">🖱️ Masayı Buradan Tutup Sürükleyebilirsiniz</div>
+
+        <div id="spectatorBanner" style="display: none; background: #e67e22; color: white; padding: 8px; border-radius: 6px; text-align: center; font-weight: bold; margin-bottom: 12px; font-size: 14px;">👁️ İzleyici Modu (Yancısın) - Oyuncuları izliyorsun</div>
+
+        <h2 id="modalTitle" style="margin-top:0; text-align: center;">Oyun Masası</h2>
+        <div id="modalStatus" style="margin-bottom: 8px; font-weight: bold; color: #f1c40f; text-align: center;">Oyuncular bekleniyor...</div>
+        
+        <!-- SÜRE GERİ SAYIM ÇUBUĞU -->
+        <div id="turnTimerContainer" style="width: 100%; height: 5px; background: rgba(255,255,255,0.15); border-radius: 3px; margin: 4px 0 12px 0; overflow: hidden; display: none;">
+            <div id="turnTimerBar" style="height: 100%; width: 100%; background: #22c55e; transition: width 1s linear;"></div>
+        </div>
+
+        <div id="reactionToast" style="display: none; font-size: 16px; font-weight: 800; color: #facc15; margin: 4px 0 10px 0; text-align: center; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 6px;"></div>
+
+        <!-- MASA REAKSİYON / TEZAHÜRAT BUTONLARI -->
+        <div id="tableReactionArea" style="display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+            <button onclick="sendTableReaction('👏 Helal!')" style="padding: 4px 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer; font-size: 12px;">👏 Helal!</button>
+            <button onclick="sendTableReaction('😱 Batar Bu!')" style="padding: 4px 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer; font-size: 12px;">😱 Batar Bu!</button>
+            <button onclick="sendTableReaction('🎯 Süper!')" style="padding: 4px 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer; font-size: 12px;">🎯 Süper!</button>
+            <button onclick="sendTableReaction('☕ Çaylar Benden!')" style="padding: 4px 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer; font-size: 12px;">☕ Çaylar Benden!</button>
+            <button onclick="sendTableReaction('⏱️ Hadi Kivre!')" style="padding: 4px 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: white; cursor: pointer; font-size: 12px;">⏱️ Hadi Kivre!</button>
+        </div>
+
+        <div id="errorToast" style="display:none; color: #e74c3c; font-weight: bold; margin-bottom: 10px; text-align: center;">Kural Hatası!</div>
+        
+        <!-- BATAK ALANI -->
+        <div id="batakArea" style="display: none;">
+            
+            <div id="batakScoreboard" style="display: flex; justify-content: space-around; flex-wrap: wrap; background: rgba(0,0,0,0.6); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 16px;"></div>
+            
+            <!-- KAÇINCI EL OLDUĞUNU YAZAN KISIM -->
+            <div id="roundDisplay" style="text-align: center; color: #2ecc71; font-weight: bold; font-size: 20px; margin-bottom: 10px;">1. El Başlıyor</div>
+
+            <!-- Diğer html kodların aynı kalacak (batakInfo, discardArea, tableCards vs.) -->
+            <div id="batakInfo" style="margin-bottom: 10px; display: flex; justify-content: space-around;">
+                <span id="trumpDisplay">Koz: Bekleniyor</span>
+                <span id="bidDisplay">İhale: 7</span>
+            </div>
+            
+            <div id="biddingArea" style="display:none; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; margin-bottom: 10px; color: white;">
+                <h3 id="biddingTitle">İhale Zamanı!</h3>
+                <div id="bidButtons" style="display: flex; gap: 5px; justify-content: center; flex-wrap: wrap;">
+                    <button id="btnPas" onclick="placeBid('pas')">Pas</button>
+                    <button id="btn4" onclick="placeBid(4)">4</button>
+                    <button id="btn5" onclick="placeBid(5)">5</button>
+                    <button id="btn6" onclick="placeBid(6)">6</button>
+                    <button id="btn7" onclick="placeBid(7)">7</button>
+                    <button id="btn8" onclick="placeBid(8)">8</button>
+                    <button id="btn9" onclick="placeBid(9)">9</button>
+                    <button id="btn10" onclick="placeBid(10)">10</button>
+                    <button id="btn11" onclick="placeBid(11)">11</button>
+                    <button id="btn12" onclick="placeBid(12)">12</button>
+                    <button id="btn13" onclick="placeBid(13)">13</button>
+                </div>
+            </div>
+
+            <div id="trumpSelectArea" style="display:none; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; margin-bottom: 10px; color: white;">
+                <h3>İhaleyi Kazandın! Koz Seç:</h3>
+                <button onclick="selectTrump('♠')">♠ Maça</button>
+                <button onclick="selectTrump('♥')">♥ Kupa</button>
+                <button onclick="selectTrump('♦')">♦ Karo</button>
+                <button onclick="selectTrump('♣')">♣ Sinek</button>
+            </div>
+
+            <div id="discardArea" style="display:none; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; margin-bottom: 10px; color: white;">
+                <h3>Önce elinden 4 kart seçip at, sonra yerdeki 4 kart eline eklenecek!</h3>
+                <p>Seçilen: <span id="selectedCount">0</span>/4</p>
+                <button id="discardBtn" onclick="sendDiscard()" disabled style="background:#27ae60; color:white; font-weight:bold; padding: 5px 15px; border:none; border-radius:4px; cursor:pointer;">Seçilenleri Göm</button>
+            </div>
+
+            <div id="tableCards" style="display: flex; justify-content: center; gap: 10px; min-height: 80px; margin: 15px 0;"></div>
+            <div id="playerHand" style="display: flex; justify-content: center; gap: 5px; flex-wrap: wrap;"></div>
+        </div>
+
+        <!-- BİLLARDO ALANI -->
+        <div id="billiardArea" style="display: none;">
+            <h3 style="color: white; margin-top: 0; margin-bottom: 5px;">8-Ball Bilardo</h3>
+            <div id="billiardStatus" style="color:white; font-size: 16px; margin-bottom:10px; font-weight:bold;">Sıra Bekleniyor...</div>
+            
+            <div id="billiardTable" style="position: relative; width: 600px; height: 300px; background: #006400; border: 10px solid #8B4513;">
+                <div class="pocket" style="position:absolute; top:-7px; left:-7px;"></div>
+                <div class="pocket" style="position:absolute; top:-12px; left:283px;"></div>
+                <div class="pocket" style="position:absolute; top:-7px; right:-7px;"></div>
+                <div class="pocket" style="position:absolute; bottom:-7px; left:-7px;"></div>
+                <div class="pocket" style="position:absolute; bottom:-12px; left:283px;"></div>
+                <div class="pocket" style="position:absolute; bottom:-7px; right:-7px;"></div>
+                
+                <div id="ballsContainer"></div>
+                <canvas id="cueCanvas" width="600" height="300" style="position:absolute; top:0; left:0; z-index:10; pointer-events:none; border:none; margin:0; padding:0; outline:none;"></canvas>
+            </div>
+            
+            <!-- FALSO (SPIN) KONTROL PANELİ -->
+            <div style="display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 10px; background: rgba(0,0,0,0.3); padding: 8px 16px; border-radius: 10px; width: fit-content; margin-left: auto; margin-right: auto;">
+                <div style="font-size: 12px; color: #cbd5e1; font-weight: bold; text-align: right;">
+                    <div style="color: #facc15;">🔴 Falso (Spin) Noktası</div>
+                    <div style="font-size: 10px; color: #94a3b8;">Topun üstüne tıkla</div>
+                </div>
+                <div id="spinController" class="spin-controller" onclick="handleSpinClick(event)">
+                    <div id="spinMarker" class="spin-marker"></div>
+                </div>
+                <button onclick="resetBilliardSpin()" style="padding: 5px 10px; background: #475569; color: white; border: none; border-radius: 5px; font-size: 11px; cursor: pointer; font-weight: bold;">Sıfırla</button>
+            </div>
+
+            <p style="color: white; font-size: 14px; margin-top: 8px;">Mouse/Parmağınla ekrana basılı tut, yay gibi geriye doğru çek ve atış yap!</p>
+        </div>
+
+        <!-- TAVLA ALANI -->
+        <div id="tavlaArea" style="display: none;">
+            <h3 style="color: white; margin-top: 0; margin-bottom: 5px;">🎲 Klasik Tavla</h3>
+            <div id="tavlaStatus" style="color:white; font-size: 16px; margin-bottom:10px; font-weight:bold;">Zarlar Bekleniyor...</div>
+            
+            <div style="display:flex; justify-content:center; align-items:center; gap:15px; margin-bottom:12px;">
+                <button id="tavlaRollBtn" onclick="handleTavlaRoll()" style="display:none; padding:10px 22px; background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; border-radius:8px; font-weight:800; font-size:15px; cursor:pointer; box-shadow:0 4px 12px rgba(245,158,11,0.4);">🎲 Zar At</button>
+                <div id="tavlaDiceDisplay" style="display:flex; gap:10px; align-items:center;"></div>
+            </div>
+
+            <div id="tavlaBoard"></div>
+        </div>
+
+        <!-- 101 OKEY ALANI (CEZALI & KATLAMASIZ) -->
+        <div id="okey101Area" style="display: none; width: 100%; max-width: 820px; margin: 0 auto; user-select: none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px; background:rgba(0,0,0,0.5); padding:8px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);">
+                <div style="font-weight:bold; font-size:16px; color:#facc15; display:flex; align-items:center; gap:8px;">
+                    <span id="okey101HeaderTitle">🀄 101 Okey (Cezalı & Katlamasız)</span>
+                    <span id="okey101RoundBadge" style="font-size:12px; background:#10b981; color:white; padding:2px 8px; border-radius:6px;">1. El</span>
+                    <button onclick="toggleYazbozModal()" style="padding:3px 10px; background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px; box-shadow:0 2px 8px rgba(245,158,11,0.4);">📋 Yazboz</button>
+                </div>
+                <div id="okey101Status" style="font-size:13px; font-weight:800; color:#38bdf8;">Sıra Bekleniyor...</div>
+            </div>
+
+            <!-- OYUNCU SKOR VE CEZA KARTLARI (4 KİŞİ) -->
+            <div id="okey101Scoreboard" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-bottom:10px;"></div>
+
+            <!-- MASA ORTASI: YÖNLÜ ATILAN TAŞLAR (SOL, SAĞ, KARŞI), GÖSTERGE & DESTE VE AÇILMIŞ PERLER -->
+            <div id="okey101CenterTable" style="background:#064e3b; border:4px solid #78350f; border-radius:12px; padding:10px; box-shadow:inset 0 0 20px rgba(0,0,0,0.6); margin-bottom:10px; min-height:190px; display:flex; flex-direction:column; gap:10px;">
+                
+                <!-- YÖNLÜ ATILAN TAŞLAR VE MASA PANELİ -->
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; background:rgba(0,0,0,0.3); padding:8px 12px; border-radius:8px;">
+                    
+                    <!-- SOL: SOLUNDAKİ OYUNCUDAN SANA ATILAN TAŞ (ALABİLECEĞİN TAŞ) -->
+                    <div id="okey101LeftDiscardSlot" style="background:rgba(15,23,42,0.8); border:2px dashed #38bdf8; border-radius:8px; padding:6px 10px; text-align:center; min-width:110px;">
+                        <div style="font-size:9px; color:#38bdf8; font-weight:800; margin-bottom:4px;">⬅️ SOLUNDAN ATILAN</div>
+                        <div id="okey101LeftPlayerName" style="font-size:10px; color:#cbd5e1; font-weight:bold; margin-bottom:3px;">-</div>
+                        <div id="okey101LeftTileContainer" style="display:flex; justify-content:center; min-height:36px; align-items:center;">
+                            <span style="color:#64748b; font-size:11px;">Boş</span>
+                        </div>
+                        <button id="okey101TakeDiscardBtn" onclick="okey101TakeDiscard()" style="display:none; margin-top:4px; padding:3px 8px; background:linear-gradient(135deg,#38bdf8,#0284c7); color:white; border:none; border-radius:5px; font-size:11px; font-weight:bold; cursor:pointer; width:100%;">
+                            🖐️ Taşı Al (Açmak Şart)
+                        </button>
+                    </div>
+
+                    <!-- ORTA: DESTE VE GÖSTERGE TAŞI (SADECE GÖSTERGE BULUNUR) -->
+                    <div style="display:flex; align-items:center; gap:14px; background:rgba(0,0,0,0.4); padding:6px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);">
+                        <div style="text-align:center;">
+                            <div style="font-size:10px; color:#facc15; font-weight:800; margin-bottom:2px;">🀄 GÖSTERGE</div>
+                            <div id="okey101GostergeTile" class="okey-tile mini"></div>
+                        </div>
+
+                        <!-- Deste -->
+                        <div id="okey101DrawDeckBtn" onclick="okey101DrawFromDeck()" class="okey-draw-pile" style="cursor:pointer;" title="Desteden Taş Çek">
+                            <span style="font-size:18px;">🀄</span>
+                            <span id="okey101DrawCount" style="font-size:11px; font-weight:bold; color:#fef08a;">Deste: 20</span>
+                        </div>
+
+                        <!-- Karşıdan Atılan Taş (Ortak / Rakip 2) -->
+                        <div id="okey101TopDiscardSlot" style="text-align:center; min-width:65px;">
+                            <div style="font-size:9px; color:#cbd5e1; font-weight:bold; margin-bottom:2px;">⬆️ Karşı: <span id="okey101TopPlayerName" style="color:#fde047;">-</span></div>
+                            <div id="okey101TopTileContainer" style="display:flex; justify-content:center; min-height:36px; align-items:center;">
+                                <span style="color:#64748b; font-size:10px;">Boş</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SAĞ: SAĞINDAKİ OYUNCUYA SENİN ATTIĞIN TAŞ -->
+                    <div id="okey101RightDiscardSlot" style="background:rgba(15,23,42,0.8); border:2px dashed #f59e0b; border-radius:8px; padding:6px 10px; text-align:center; min-width:110px;">
+                        <div style="font-size:9px; color:#f59e0b; font-weight:800; margin-bottom:4px;">➡️ SAĞINA ATTIĞIN</div>
+                        <div id="okey101RightPlayerName" style="font-size:10px; color:#cbd5e1; font-weight:bold; margin-bottom:3px;">Sen</div>
+                        <div id="okey101RightTileContainer" style="display:flex; justify-content:center; min-height:36px; align-items:center;">
+                            <span style="color:#64748b; font-size:11px;">Boş</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ORTADAKİ AÇILMIŞ PERLER (MASAYA AÇILANLAR) -->
+                <div style="background:rgba(0,0,0,0.25); border-radius:8px; padding:8px; flex:1; max-height:150px; overflow-y:auto;">
+                    <div style="font-size:11px; color:#94a3b8; font-weight:bold; margin-bottom:6px; display:flex; justify-content:space-between;">
+                        <span>🏛️ Masaya Açılan Perler</span>
+                        <span style="color:#a7f3d0; font-size:10px;">Katlamasız (Herkes min 101 ile açabilir)</span>
+                    </div>
+                    <div id="okey101TableOpenedPersList" style="display:flex; flex-direction:column; gap:6px;">
+                        <div style="color:#6ee7b7; font-size:12px; font-style:italic; padding:6px;">Henüz kimse el açmadı.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OYUNCUNUN ISTAKASI (RACK) -->
+            <div id="okey101RackArea" style="background:#451a03; border:3px solid #78350f; border-radius:12px; padding:10px; box-shadow:0 8px 24px rgba(0,0,0,0.8);">
+                
+                <!-- YANDAN TAŞ ALINDI UYARISI & GERİ BIRAKMA BUTONU -->
+                <div id="okey101DiscardWarning" style="display:none; background:rgba(220, 38, 38, 0.25); border:1px solid #ef4444; color:#fca5a5; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:bold; margin-bottom:8px; justify-content:space-between; align-items:center; box-shadow:0 0 10px rgba(239,68,68,0.3);">
+                    <span>⚠️ Yandan taş aldınız! El açmak (101 / 5 çift) veya masaya işlemek zorundasınız!</span>
+                    <button onclick="okey101ReturnDiscard()" style="background:linear-gradient(135deg,#e11d48,#be123c); color:white; border:none; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.4);">↩️ Taşı Geri Bırak (Desteden Çek)</button>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+                    <div style="font-size:12px; color:#fde68a; font-weight:bold;">
+                        🪵 Istakam (<span id="okey101TileCount">0</span> Taş) 
+                        <span id="okey101SelectedScoreDisplay" style="color:#34d399; margin-left:8px; font-size:12px;">Seçilen: 0 Puan</span>
+                    </div>
+                    <!-- Aksiyon Butonları -->
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <button onclick="okey101SortSeries()" style="padding:5px 10px; background:#1e293b; color:#38bdf8; border:1px solid #38bdf8; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">🔢 Seri Diz</button>
+                        <button onclick="okey101SortPairs()" style="padding:5px 10px; background:#1e293b; color:#fbbf24; border:1px solid #fbbf24; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">👥 Çift Diz</button>
+                        <button id="okey101OpenHandBtn" onclick="okey101SubmitOpenHand()" style="padding:5px 12px; background:linear-gradient(135deg,#10b981,#059669); color:white; border:none; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">✨ El Aç (101)</button>
+                        <button id="okey101OpenPairsBtn" onclick="okey101SubmitOpenPairs()" style="padding:5px 10px; background:linear-gradient(135deg,#f59e0b,#d97706); color:white; border:none; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">👥 5 Çift Aç</button>
+                        <button id="okey101DiscardBtn" onclick="okey101SubmitDiscard()" style="padding:5px 14px; background:linear-gradient(135deg,#ef4444,#dc2626); color:white; border:none; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">🗑️ Taş At</button>
+                    </div>
+                </div>
+
+                <!-- 2 Sıralı Taş Yerleşimi -->
+                <div id="okey101PlayerHandRack" class="okey-rack-grid"></div>
+            </div>
+        </div>
+
+        <button onclick="leaveCurrentTable()" style="margin-top: 15px; padding: 8px 15px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">Kapat / Ayrıl</button>
+    </div>
+
+    <!-- 101 OKEY KIRAATHANE A4 YAZBOZ (ÇETELE) MODALI -->
+    <div id="okey101YazbozModal" class="yazboz-modal-overlay">
+        <div class="yazboz-a4-sheet">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <div class="yazboz-stamp">KIRAATHANE ÇETELİSİ</div>
+                <button onclick="closeYazbozModal()" style="background:#e7e5e4; border:1px solid #a8a29e; color:#1c1917; font-size:15px; font-weight:bold; padding:4px 10px; border-radius:6px; cursor:pointer;">✕</button>
+            </div>
+
+            <div class="yazboz-header">
+                <h3 class="yazboz-title">📋 101 Okey Yazbozu</h3>
+                <div style="font-size:12px; color:#78716c; margin-top:3px;">
+                    <span id="yazbozModeBadge" style="font-weight:bold; color:#1d4ed8;">Eşli (2v2) Katlamasız</span> | 
+                    El Sayısı: <b id="yazbozRoundText" style="color:#0f172a;">1. El</b>
+                </div>
+            </div>
+
+            <!-- + (ARTI) ŞEKLİNDE KIRAATHANE ÇETELE IZGARASI -->
+            <div class="yazboz-cross-grid">
+                <!-- 1. Satır: Takım İsimleri (Sol 1. Grup, Sağ 2. Grup) -->
+                <div class="yazboz-team-header team-1" id="yazbozTeam1Title">
+                    🔵 1. GRUP (1 & 3)
+                    <div style="font-size:11px; font-weight:normal; opacity:0.9;" id="yazbozTeam1Players">Oyuncu 1 & Oyuncu 3</div>
+                </div>
+                <div class="yazboz-team-header team-2" id="yazbozTeam2Title">
+                    🟠 2. GRUP (2 & 4)
+                    <div style="font-size:11px; font-weight:normal; opacity:0.9;" id="yazbozTeam2Players">Oyuncu 2 & Oyuncu 4</div>
+                </div>
+
+                <!-- 2. Satır: Üst Bölüm Başlığı -->
+                <div class="yazboz-section-title">
+                    📝 ÜST TARAF: Elde Kalan Sayıların Cezaları
+                </div>
+
+                <!-- 3. Satır: Üst Hücreler (El Cezaları) -->
+                <div class="yazboz-cell team-1" id="yazbozTopTeam1">
+                    <div style="color:#a8a29e; font-style:italic;">Henüz el bitmedi...</div>
+                </div>
+                <div class="yazboz-cell team-2" id="yazbozTopTeam2">
+                    <div style="color:#a8a29e; font-style:italic;">Henüz el bitmedi...</div>
+                </div>
+
+                <!-- 4. Satır: Üst Toplamlar -->
+                <div class="yazboz-subtotal-bar">
+                    <div class="yazboz-subtotal-item team-1">
+                        <span>Üst El Toplamı:</span>
+                        <b id="yazbozTopSumTeam1">0</b>
+                    </div>
+                    <div class="yazboz-subtotal-item team-2">
+                        <span>Üst El Toplamı:</span>
+                        <b id="yazbozTopSumTeam2">0</b>
+                    </div>
+                </div>
+
+                <!-- 5. Satır: + Şeklindeki Bölme Çizgisi (Alt Bölüm Başlığı) -->
+                <div class="yazboz-section-title divider-plus">
+                    ➕ ALT TARAF: Yenilen Cezalar (+101, +80 vb.) ve Silerler (-101, -202)
+                </div>
+
+                <!-- 6. Satır: Alt Hücreler (Cezalar ve Silerler) -->
+                <div class="yazboz-cell team-1" id="yazbozBottomTeam1">
+                    <div style="color:#a8a29e; font-style:italic;">Ceza veya siler yok.</div>
+                </div>
+                <div class="yazboz-cell team-2" id="yazbozBottomTeam2">
+                    <div style="color:#a8a29e; font-style:italic;">Ceza veya siler yok.</div>
+                </div>
+
+                <!-- 7. Satır: Alt Toplamlar (Cezalar - Silerler) -->
+                <div class="yazboz-subtotal-bar">
+                    <div class="yazboz-subtotal-item team-1">
+                        <span>Alt Ceza/Siler:</span>
+                        <b id="yazbozBottomSumTeam1">0</b>
+                    </div>
+                    <div class="yazboz-subtotal-item team-2">
+                        <span>Alt Ceza/Siler:</span>
+                        <b id="yazbozBottomSumTeam2">0</b>
+                    </div>
+                </div>
+
+                <!-- 8. Satır: GENEL TOPLAM CEZA (En düşük olan kazanır) -->
+                <div class="yazboz-grand-footer">
+                    <div class="yazboz-grand-item team-1">
+                        <span style="font-size:11px; opacity:0.8;">1. GRUP TOPLAM CEZA</span>
+                        <span style="font-size:20px; color:#60a5fa;" id="yazbozTotalScoreTeam1">0</span>
+                    </div>
+                    <div class="yazboz-grand-item team-2">
+                        <span style="font-size:11px; opacity:0.8;">2. GRUP TOPLAM CEZA</span>
+                        <span style="font-size:20px; color:#fb923c;" id="yazbozTotalScoreTeam2">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bilgilendirme Notu & Aksiyon Butonları -->
+            <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div style="font-size:11px; color:#78716c;">
+                    💡 <i>Kıraathane Kuralı: En az ceza puanına sahip olan grup öndedir. Kırmızı üzeri çizili sayılar silerdir.</i>
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <button id="yazbozNextRoundBtn" onclick="okey101NextRound()" style="display:none; padding:7px 16px; background:linear-gradient(135deg,#10b981,#059669); color:white; border:none; border-radius:6px; font-weight:800; font-size:12px; cursor:pointer; box-shadow:0 2px 8px rgba(16,185,129,0.4);">⏩ Sonraki Ele Geç</button>
+                    <button onclick="closeYazbozModal()" style="padding:7px 18px; background:#44403c; color:white; border:none; border-radius:6px; font-weight:bold; font-size:12px; cursor:pointer;">Kapat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. METAVERSE OYUN ALANI (CANVAS) -->
+    <canvas id="gameCanvas" width="800" height="500" style="background: #2ecc71; display: block; margin: 0 auto; border: 2px solid #27ae60;"></canvas>
+
+    <!-- SOSYAL EYLEM BUTONLARI -->
+    <div id="socialActionBar" style="display: flex; gap: 10px; margin-top: 14px; justify-content: center; flex-wrap: wrap;">
+        <button id="btnFishAction" onclick="triggerFishing()" style="display: none; padding: 9px 16px; background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; align-items: center; gap: 5px; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);">🎣 Oltayı At (Balık Tut)</button>
+        <button id="btnSwanBoatAction" onclick="handleRentSwanBoat()" style="display: none; padding: 9px 16px; background: linear-gradient(135deg, #f43f5e, #be123c); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; align-items: center; gap: 5px; box-shadow: 0 4px 12px rgba(244, 63, 94, 0.4);">🦢 Kuğu Deniz Bisikleti Kirala (20 TL)</button>
+        <button id="btnEditHouseFurniture" onclick="openFurniturePlacementModal()" style="display: none; padding: 9px 16px; background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; align-items: center; gap: 5px; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);">🛋️ Mobilyaları Düzenle</button>
+        <button id="btnLeaveHouseAction" onclick="changeRoom('sokak')" style="display: none; padding: 9px 16px; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; align-items: center; gap: 5px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);">🚪 Sokağa Çık</button>
+        <button onclick="triggerPlayerAction('wave')" style="padding: 9px 16px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">👋 El Salla</button>
+        <button onclick="triggerPlayerAction('dance')" style="padding: 9px 16px; background: linear-gradient(135deg, #ec4899, #db2777); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);">💃 Dans Et</button>
+        <button onclick="triggerPlayerAction('clap')" style="padding: 9px 16px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">👏 Alkışla</button>
+    </div>
+
+    <!-- BALIK TUTMA GERİ SAYIM PANELİ (SAHİL) -->
+    <div id="fishingProgressContainer" style="display: none; position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.95); border: 2px solid #38bdf8; border-radius: 14px; padding: 12px 24px; color: white; text-align: center; z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.7); backdrop-filter: blur(8px);">
+        <div style="font-size: 15px; font-weight: 800; color: #38bdf8; margin-bottom: 4px;">🎣 Oltan Denizde... Balık Bekleniyor!</div>
+        <div style="font-size: 12px; color: #94a3b8; margin-bottom: 8px;">Kıpırdamadan bekle, balık oltaya vurmak üzere (<span id="fishingCountdownText" style="color:#facc15; font-weight:bold;">10</span>s)</div>
+        <div style="width: 230px; height: 8px; background: rgba(255,255,255,0.15); border-radius: 4px; overflow: hidden; margin: 0 auto;">
+            <div id="fishingProgressBar" style="height: 100%; width: 100%; background: linear-gradient(90deg, #38bdf8, #0284c7); transition: width 0.1s linear;"></div>
+        </div>
+    </div>
+
+    <!-- BALIK YAKALAMA POPUP MODALI -->
+    <div id="fishingResultModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 23000; justify-content: center; align-items: center; color: white;">
+        <div style="background: #1e293b; padding: 25px; border-radius: 18px; width: 90%; max-width: 380px; text-align: center; border: 2px solid #38bdf8; box-shadow: 0 15px 40px rgba(0,0,0,0.8); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            <div id="catchLootEmoji" style="font-size: 58px; margin-bottom: 8px;">🐟</div>
+            <h2 id="catchLootName" style="color: #facc15; margin: 0 0 6px 0; font-size: 22px;">Karadeniz Hamsisi</h2>
+            <p id="catchLootDesc" style="color: #cbd5e1; font-size: 14px; margin-bottom: 14px;">Taze bir hamsi yakaladın!</p>
+            <div id="catchLootReward" style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; font-weight: 800; font-size: 16px; padding: 8px 16px; border-radius: 10px; display: inline-block; margin-bottom: 18px;">+1 TL Kazandın!</div>
+            <div>
+                <button onclick="closeFishingResultModal()" style="padding: 10px 24px; background: linear-gradient(135deg, #38bdf8, #0284c7); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px;">🎣 Devam Et</button>
+            </div>
+        </div>
+    </div>
+    <!-- MOBİL EKRAN D-PAD KONTROLLERİ -->
+    <div id="mobileControlsOverlay" class="mobile-dpad-container" style="display: none;">
+        <div style="position: relative; width: 100%; height: 100%;">
+            <button class="mobile-dpad-btn up" onmousedown="handleTouchKey('w', true, event)" onmouseup="handleTouchKey('w', false, event)" onmouseleave="handleTouchKey('w', false, event)" ontouchstart="handleTouchKey('w', true, event)" ontouchend="handleTouchKey('w', false, event)" ontouchcancel="handleTouchKey('w', false, event)">⬆️</button>
+            <button class="mobile-dpad-btn left" onmousedown="handleTouchKey('a', true, event)" onmouseup="handleTouchKey('a', false, event)" onmouseleave="handleTouchKey('a', false, event)" ontouchstart="handleTouchKey('a', true, event)" ontouchend="handleTouchKey('a', false, event)" ontouchcancel="handleTouchKey('a', false, event)">⬅️</button>
+            <div class="mobile-dpad-center"></div>
+            <button class="mobile-dpad-btn right" onmousedown="handleTouchKey('d', true, event)" onmouseup="handleTouchKey('d', false, event)" onmouseleave="handleTouchKey('d', false, event)" ontouchstart="handleTouchKey('d', true, event)" ontouchend="handleTouchKey('d', false, event)" ontouchcancel="handleTouchKey('d', false, event)">➡️</button>
+            <button class="mobile-dpad-btn down" onmousedown="handleTouchKey('s', true, event)" onmouseup="handleTouchKey('s', false, event)" onmouseleave="handleTouchKey('s', false, event)" ontouchstart="handleTouchKey('s', true, event)" ontouchend="handleTouchKey('s', false, event)" ontouchcancel="handleTouchKey('s', false, event)">⬇️</button>
+        </div>
+    </div>
+
+    <!-- MOBİL ETKİLEŞİM ("E" TUŞU) BUTONU -->
+    <button id="mobileActionBtn" onclick="triggerMobileInteract()" style="display: none; position: fixed; bottom: 25px; right: 20px; z-index: 12000; width: 66px; height: 66px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #d97706); border: 3px solid #fef08a; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.6); color: white; font-weight: 900; cursor: pointer; flex-direction: column; align-items: center; justify-content: center; touch-action: manipulation; user-select: none;">
+        <span style="font-size: 16px;">🎯 E</span>
+        <span style="font-size: 9px; opacity: 0.9; margin-top: 1px;">Etkileşim</span>
+    </button>
+
+    <!-- JS DOSYALARI -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        window.socket = socket;
+    </script>
+    <script src="js/audio.js"></script>
+    <script src="js/social.js"></script>
+    <script src="js/housing.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/batak.js"></script>
+    <script src="js/billiard.js"></script>
+    <script src="js/tavla.js"></script>
+    <script src="js/okey101.js"></script>
+</body>
+</html>
